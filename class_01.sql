@@ -19,7 +19,7 @@ create table 테이블명(
 
 
 -- mamberTBl 테이블 생성
-membertblCREATE TABLE memberTBL (
+CREATE TABLE memberTBL (
     memberId CHAR(8) NOT NULL,
     memberName CHAR(5) NOT NULL,
     memberAddress CHAR(20),
