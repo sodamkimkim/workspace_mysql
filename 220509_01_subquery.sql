@@ -15,11 +15,6 @@
 -- 서브쿼리는 복잡한 Join이나 union보다 좀 더 읽기 편하다.
 
 
-
-
-﻿
-
-
 -- DB 생성
 CREATE DATABASE reservationdb;
 use reservationdb;
