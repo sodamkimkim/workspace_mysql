@@ -15,6 +15,7 @@ CREATE TABLE shop_db.product (
 create index idx_product_name
 on product (p_name);
 
+
 -- 가상 테이블(뷰 테이블)만들기
 select * from product;
 
@@ -35,6 +36,7 @@ alter table product add input_time timestamp;
 create view product_view
 as select p_name, created, company
 from product;
+
 
 desc product_view;
 select * from product_view; -- product table에서 view로 참조되는 부분만 보여주는 개념
