@@ -18,6 +18,7 @@ CREATE TABLE 앨범(
 별점 DECIMAL(4,1)
 );
 DESC 앨범;
+select * from 앨범;
 
 DROP TABLE 곡;
 CREATE TABLE 곡(
@@ -100,6 +101,45 @@ INNER JOIN 곡 AS b
 ON a.앨범번호 = b.앨범번호
 GROUP BY b.앨범번호;
 
+select * from 앨범;
+select * from 곡;
+
+-- 서브쿼리 활용
+select a.앨범번호, a.타이틀, count(b.곡명)
+from 앨범 as a
+inner join (select 앨범번호, 곡명 from 곡)as b
+on a.앨범번호 = b.앨범번호
+group by a.앨범번호;
+
+select a.앨범번호, a.타이틀, (select 앨범번호, count(곡명) from 곡 group by 앨범번호)
+from 앨범 as a;
+
+
+-- 그니까.. select에는 행의 수를 맞춰줘야함 각 컬럼값이 row1 : row1되어야함
+-- 근데 갑자기 뜬금 count를 써버리면 
+-- 원래 서브쿼리안쓰고 count쓰면 count에 맞춰서 행이 1개로 겹쳐지지만
+-- 이 상황에서는 행 수 안맞다고 에러가 뜬다
+
+
+-- 근데 subquery먼저 실행되니까.. 바깥 a에 대해선 서브쿼리에서 접근할 수가 없음
+-- select절에 
+-- 4. 스칼라 서브쿼리(scalar, select절에)
+-- emp_no, first_name, title, 부서번호 , 부서명 뽑기
+select e.emp_no, e.first_name, t.title, (select d.dept_no from dept_emp as d where e.emp_no=d.emp_no group by emp_no) as 부서번호, (select dn.dept_name from departments as dn where dn.dept_no = d.dept_no group by dept_no) as 부서명
+from employees as e, (select title, emp_no from titles) as t, (select dept_no, emp_no from dept_emp) as d
+where e.emp_no = t.emp_no and e.emp_no = d.emp_no;
+
+use employees;
+
+
+
+
+
+
+
+
+
+
 
 -- 문제 5. '사랑'이라는 단어가 포함된 곡명을 가진 앨범의 타이틀별 수록곡의 개수를 검색하라.
 SELECT a.앨범번호, a.타이틀, COUNT(b.곡명) AS '사랑관련 곡 수'
@@ -135,4 +175,104 @@ SELECT 곡명, COUNT(앨범번호) as 수록곡수
 FROM 곡
 GROUP BY 곡명 
 HAVING COUNT(곡번호)>=2;
+
+
+-- 쌤------------------------------------
+SELECT * FROM 앨범; 
+SELECT * FROM 곡; 
+DESC 곡;
+DESC 앨범;
+
+-- 1. '해변의 여인'이라는 노래를 담고 있는 타이틀과 아티스트를 검색하라.
+SELECT a.타이틀, a.아티스트, b.곡명 
+FROM 앨범 AS a
+INNER JOIN 곡 AS b 
+ON b.앨범번호 = a.앨범번호
+WHERE b.곡명 = '해변의 여인';
+
+
+-- mysql 쿼리 
+SELECT a.타이틀, a.아티스트, b.곡명 
+FROM 앨범 AS a, 곡 AS b 
+WHERE b.앨범번호 = a.앨범번호 
+AND b.곡명 = '해변의 여인';
+
+
+
+-- 2. '그대내품에'라는 노래를 부른 아티스트를 검색하라.
+select  a.아티스트 
+from 앨범 as a 
+inner join 곡 as b 
+on a.앨범번호 = b.앨범번호 
+where b.곡명 = '그대 내 품에';
+
+-- mysql join 쿼리 
+select a.아티스트 
+from 앨범 as a, 곡 as b 
+where a.앨범번호 = b.앨범번호 
+and b.곡명 = '그대 내 품에';
+
+-- 문제 3. 'Break Up 2 Make Up'이라는 이름을 가지고 있는 앨범에 수록된 노래를 모두 검색하라.
+SELECT B.곡명
+FROM 앨범 as A
+INNER JOIN 곡 AS B 
+ON A.앨범번호 = B.앨범번호
+WHERE A.타이틀 = 'Break Up 2 Make Up';
+
+
+
+-- 문제 4. 각 앨범에 수록된 타이틀별 수록곡의 개수를 검색하라.
+SELECT a.타이틀, COUNT(b.앨범번호) AS '수록곡 수'
+FROM 앨범 AS a
+INNER JOIN 곡 AS b
+ON b.앨범번호 = a.앨범번호
+GROUP BY a.타이틀;
+
+
+
+SELECT a.타이틀, COUNT(b.앨범번호) AS '수록곡 수'
+FROM 앨범 a, 곡 b
+WHERE b.앨범번호 = a.앨범번호
+GROUP BY a.타이틀;
+
+
+
+
+-- 문제 5. '사랑'이라는 단어가 포함된 곡명을 가진 앨범의 타이틀별 수록곡의 개수를 검색하라.
+SELECT a.타이틀, COUNT(b.앨범번호) AS '수록곡 수'
+FROM 앨범 AS a
+INNER JOIN 곡 AS b
+ON b.앨범번호 = a.앨범번호
+WHERE b.곡명 LIKE '%사랑%'
+GROUP BY a.타이틀;
+
+
+
+
+
+
+-- 문제 6 타이틀과 곡명이 동일한 앨범의 노래 이름을 검색하라.
+SELECT b.곡명
+FROM 앨범 AS a
+INNER JOIN 곡 AS b
+ON b.앨범번호 = a.앨범번호
+WHERE b.곡명 = a.타이틀;  
+
+
+
+
+
+-- 문제 7 예를 들어 그룹 'Blur'가 'Blur'라는 이름의 앨범을 발매할 수 있다.
+-- 이와 같이 아티스트와 타이틀이 동일한 앨범의 타이틀을 검색하라.
+SELECT 타이틀
+FROM 앨범
+WHERE 아티스트 = 타이틀;
+
+
+-- 문제 8 동일한 곡명이 2개 이상 앨범에 존재하는 경우,
+-- 해당 곡명과 수록 곡의 개수를 검색하라.
+SELECT 곡명, COUNT(앨범번호) AS '수록곡 수'
+FROM 곡 
+GROUP BY 곡명
+HAVING COUNT(곡명) > 1;
 
