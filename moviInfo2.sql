@@ -4,35 +4,83 @@ use movieInfo;
 drop table movie;
 drop table person;
 drop table role;
-create table movie(
-영화번호 int not null primary key,
+
+create table movieINfo(
+movieinfoNum int not null primary key,
 영화이름 varchar(30) not null,
-개봉연도 int not null,
-매출액 int,
-관객수 int,
-평점 decimal(3,1)
+발매 int not null,
+foreign key(releaseNum) references movieRelaseInfo(releaseNum),
+movieplotNum int not null,
+foreign key(movieplotNum) references moviePlot(movieplotNum),
+reportNum int not null,
+foreign key(reportNum) references moviereport(reportNum),
+
+
+-- actorINfo, personInfo
+감독이름 varchar(30), -- staffNum
+-- staffINfo, personInfo
+대표배우이름 varchar(30)-- actorNum
+
 );
-create table role(
-역할번호 int not null primary key,
-영화번호 int not null,
-구분 varchar(30) not null, -- 영화에서의포지션 , 감독/주연/보조주연/보조출연자 등
-역할이름 varchar(30), -- 영화에서의역할이름
-감독번호 int,
-배우번호 int,
-foreign key(영화번호) references movie(영화번호),
-foreign key(감독번호) references person(감독번호),
-foreign key(배우번호) references person(배우번호)
+create table movieReleaseInfo(
+releaseNum int not null primary key,
+movieinfoNum int not null,
+개봉연도 int not null,
+개봉월 int not null
 );
 
-create table movie(
-배우번호 int not null primary key,
+create table moviePlot(
+movieplotNum int not null primary key,
+movieinfoNum int not null,
+줄거리 varchar(500)
+);
+
+create table movieReport(
+reportNum int not null primary key,
+movieinfoNum int not null,
+매출액 int not null,
+관객수 int not null,
+평점 decimal(3,1) not null,
+review1 varchar(500),
+review2 varchar(500),
+review3 varchar(500)
+);
+
+-- <용어 정의>
+-- crew : 배우, staff포괄
+-- actor : 배우
+-- staff : 배우외 제작진(감독 포함)
+
+create table actorRole(
+actorroleNum int not null primary key,
+movieinfoNum int not null,
+역할이름 varchar(30),
+-- actorINfo
+actorNum int not null
+);
+
+create table actorINfo(
+actorNum int not null primary key,
+personNum int not null, 
+대표작품 varchar(30), 
+대표역할 int 
+);
+create table staffINfo(
+staffNum int not null primary key,
+personNum int not null,
+대표작품 varchar(30)
+);
+create table personInfo(
+personNum int not null primary key,
 이름 varchar(30) not null,
+주민등록성별 varchar(30) not null,
 출생년도 int,
 키 decimal(4,1),
 몸무게 decimal(10,1),
 배우자 varchar(30)
 );
 
+-- 배우/감독의 대표자, 대표역할 조회하려면?
 
 
 
