@@ -1,4 +1,4 @@
-
+drop database movieEx;
 create database movieEx;
 use movieEx;
 drop table 영화;
@@ -97,6 +97,7 @@ delete from 출연 where 역='test역';
 
 -- 데이터 검색 
 SELECT * FROM 영화; 
+select * from 출연;
 
 -- 문제 1 : 평점이 9이상인 영화의 이름과 평점을 검색하라.
 select 이름, 평점
@@ -145,14 +146,39 @@ inner join 배우 as b
 on a.배우번호 = b.번호
 where a.영화번호 = 1;
 
+-- 쌤 정답
+select c.이름
+from 영화 as a 
+inner join 출연 as b 
+on b.배우번호 = a.번호 
+inner join 배우 as c 
+on c.번호 = b.배우번호
+where b.영화번호 = 1;
+
 -- 문제 10: 이름이 '도둑들'인 영화에 출연한 배우의 이름을 검색하라.
-select a.이름, a.번호 as 배우번호, b.영화번호 as 영화번호, c.이름 as 영화이름
-from 배우 as a
-inner join 출연 as b
-on a.번호 = b.배우번호
-inner join 영화 as c
-on b.영화번호 = a.번호
-where c.이름 = '도둑들';
+-- select a.이름, a.번호 as 배우번호, b.영화번호 as 영화번호
+-- from 배우 as a
+-- inner join 출연 as b
+-- on a.번호 = b.배우번호
+-- inner join 영화 as c
+-- on b.영화번호 = a.번호
+-- where c.이름 = '도둑들'; -- 틀렸음
+
+select a.이름, a.번호 as 배우번호, r.영화번호 as 영화번호
+from 영화 as m
+inner join 출연 as r
+on r.영화번호 = m.번호
+inner join 배우 as a
+on a.번호 = r.배우번호
+where m.이름 = '도둑들';
+
+-- 쌤 정답
+select c.이름 
+from 영화 as a 
+inner join 출연 as b on a.번호 = b.영화번호
+inner join 배우 as c on c.번호 = b.배우번호 
+where a.이름 = '도둑들';
+
 
 -- 문제 11 : 영화 배우 '송강호'가 출연한 영화 이름을 검색하라.
 select a.이름 as 영화이름, c.이름
@@ -161,7 +187,12 @@ inner join 출연 as b on b.영화번호 =a.번호
 left join 배우 as c on c.번호 = b.배우번호
 where c.이름 = '송강호'
 ;
-
+-- 쌤 정답
+select a.이름 
+from 영화 as a 
+inner join 출연 as b on a.번호 = b.영화번호 
+inner join 배우 as c on c.번호 = b.배우번호 
+where c.이름 = '송강호';
 
 
 -- 문제 12 : 영화 배우 '주진모'가 주연으로 출연하지 않은 영화 이름을 검색하라. 
